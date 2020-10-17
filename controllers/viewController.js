@@ -5,11 +5,8 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
 exports.getOverview = catchAsync(async (req, res, next) => {
-  //1) Get tour data from collection or db
   const tours = await Tour.find();
-  //2) Build template
 
-  //3) Render that template using tour data from 1)
   res.status(200).render('overview', {
     title: 'All Tours',
     tours,
@@ -37,7 +34,6 @@ exports.login = catchAsync(async (req, res) => {
   });
 });
 
-//We dont need to query for current user it is already done in protect
 exports.getAccount = (req, res) => {
   res.status(200).render('account', {
     title: 'Your account',
@@ -58,19 +54,15 @@ exports.updateUserData = catchAsync(async (req, res, next) => {
   );
   res.status(200).render('account', {
     title: 'Your account',
-    user: updatedUser, //we are sending updated user data to front page and not the data from protect middleware
+    user: updatedUser,
   });
 });
 
-//Rendering the booked tours of a user
 exports.getMyTours = catchAsync(async (req, res, next) => {
-  //1) Find all bookings by user id
   const bookings = await Booking.find({ user: req.user.id });
 
-  //2) Find tours with the returned IDs . This is a tour array
   const tourIDs = bookings.map((el) => el.tour);
 
-  //3) Find the tour by passing tour array
   const tours = await Tour.find({ _id: { $in: tourIDs } });
 
   res.status(200).render('overview', {

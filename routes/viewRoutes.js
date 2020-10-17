@@ -16,7 +16,6 @@ router.get('/me', authController.protect, viewController.getAccount);
 
 router.get('/my-tours', authController.protect, viewController.getMyTours);
 
-//For submiting data to dataBase
 router.post(
   '/submit-user-data',
   authController.protect,

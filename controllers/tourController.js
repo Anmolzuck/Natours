@@ -15,7 +15,6 @@ const multerFilter = (req, file, cb) => {
   }
 };
 
-//for image upload
 const upload = multer({
   storage: multerStorage,
   fileFilter: multerFilter,
@@ -27,9 +26,6 @@ exports.uploadTourImages = upload.fields([
 ]);
 
 exports.resizeTourImages = catchAsync(async (req, res, next) => {
-  // console.log(req.files);
-
-  // 1) Cover image Put the file name on req.body.imageCover so that our update middleWare updates it to db
   req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
   await sharp(req.files.imageCover[0].buffer)
     .resize(2000, 1333)
@@ -37,7 +33,6 @@ exports.resizeTourImages = catchAsync(async (req, res, next) => {
     .jpeg({ quality: 90 })
     .toFile(`public/img/tours/${req.body.imageCover}`);
 
-  //2) Other images
   req.body.images = [];
 
   await Promise.all(
@@ -56,7 +51,6 @@ exports.resizeTourImages = catchAsync(async (req, res, next) => {
   next();
 });
 
-//Prefilling the query data
 exports.aliasTopTours = (req, res, next) => {
   req.query.limit = '5';
   req.query.sort = '-ratingsAverage,price';
@@ -70,7 +64,6 @@ exports.createTour = factory.createOne(Tour);
 exports.updateTour = factory.updateOne(Tour);
 exports.deleteTour = factory.deleteOne(Tour);
 
-// Pipelining and calcuating averages
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([
     {
@@ -99,7 +92,6 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
   });
 });
 
-//Unwinding and projecting
 exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
   const year = req.params.year * 1; // 2021
 
@@ -142,9 +134,6 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
     },
   });
 });
-
-// /tours-within/:distance/center/:latlng/unit/:unit
-// /tour-distance/233/center/-40,45/unit/mi
 
 exports.getTourWithin = catchAsync(async (req, res, next) => {
   const { distance, latlng, unit } = req.params;

@@ -1,12 +1,10 @@
 /* eslint-disable */
-//This file takes input from user
 import '@babel/polyfill';
 import { displayMap } from './mapBox';
 import { login, logout } from './login';
 import { updateSettings } from './updateSettings';
 import { bookTour } from './stripe';
 
-//DOM Elements
 const mapbox = document.getElementById('map');
 const loginForm = document.querySelector('.from--login');
 const logOutBtn = document.querySelector('.nav__el--logout');
@@ -14,7 +12,6 @@ const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
 const bookBtn = document.getElementById('book-tour');
 
-//Delegation
 if (mapbox) {
   const locations = JSON.parse(mapbox.dataset.locations);
   displayMap(locations);
@@ -30,15 +27,6 @@ if (loginForm) {
 }
 
 if (logOutBtn) logOutBtn.addEventListener('click', logout);
-
-// if (userDataForm) {
-//   userDataForm.addEventListener('submit', (el) => {
-//     el.preventDefault();
-//     const email = document.getElementById('email').value;
-//     const name = document.getElementById('name').value;
-//     updateSettings({ name, email }, 'data');
-//   });
-// }
 
 if (userDataForm) {
   userDataForm.addEventListener('submit', (el) => {
@@ -67,7 +55,6 @@ if (userPasswordForm)
       'password'
     );
 
-    //to clear the password fields
     document.querySelector('.btn--save-password').textContent = 'Save password';
     document.getElementById('password-current').value = '';
     document.getElementById('password').value = '';

@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config({ path: './config.env' });
 
-//handling uncaught exceptions
 process.on('uncaughtException', (err) => {
   console.log('Unhadled exception. Shutting down...');
   console.log(err.name, err.message);
@@ -25,12 +24,11 @@ mongoose
   .then(() => console.log('DB connection successfully established!'));
 
 const port = process.env.PORT || 3000;
-// Start the server
+
 const server = app.listen(port, () => {
   console.log(`App running on port ${port}`);
 });
 
-//handling promise rejections
 process.on('unhandledRejection', (err) => {
   console.log(err.name, err.message);
   console.log('Unhadled rejection. Shutting down...');
@@ -38,4 +36,3 @@ process.on('unhandledRejection', (err) => {
     process.exit(1);
   });
 });
-
