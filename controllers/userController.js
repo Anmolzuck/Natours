@@ -5,6 +5,16 @@ const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const factory = require('./handleFactory');
 
+// const multerStorage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'public/img/users');
+//   },
+//   filename: (req, file, cb) => {
+//     const ext = file.mimetype.split('/')[1];
+//     cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
+//   },
+// });
+
 const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, cb) => {
@@ -15,6 +25,7 @@ const multerFilter = (req, file, cb) => {
   }
 };
 
+//for image upload
 const upload = multer({
   storage: multerStorage,
   fileFilter: multerFilter,
@@ -22,9 +33,11 @@ const upload = multer({
 
 exports.uploadUserPhoto = upload.single('photo');
 
+//edit user photo
 exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
+  //Because filename is not set when we use memoryStorage
   req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
 
   await sharp(req.file.buffer)
@@ -36,6 +49,8 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   next();
 });
 
+//filter the request body
+/* newObj[el] = obj[el] => newObj with the field name of the current field,should be equal to whatever is in the object at the current element, so the current field name.*/
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {
@@ -43,12 +58,16 @@ const filterObj = (obj, ...allowedFields) => {
   });
   return newObj;
 };
+
+//Set the getOne id value to user id and user can get his info
 exports.getMe = (req, res, next) => {
   req.params.id = req.user.id;
   next();
 };
 
+// updating the currrently authenticated user
 exports.updateMe = catchAsync(async (req, res, next) => {
+  //1) Create error if user Posts password data
   if (req.body.password || req.body.passwordConfirm) {
     return next(
       new AppError(
@@ -57,10 +76,13 @@ exports.updateMe = catchAsync(async (req, res, next) => {
       )
     );
   }
+  //2) We need to filter the update request so that we only allow users to update the fields we want and not any other field
   const filteredBody = filterObj(req.body, 'name', 'email');
 
+  //upload new photo file name to database
   if (req.file) filteredBody.photo = req.file.filename;
 
+  //3) Update user document
   const updateUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
     runValidators: true,
@@ -73,6 +95,8 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+//Allowing user to delete his account
 exports.deleteMe = catchAsync(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
 
@@ -91,5 +115,7 @@ exports.createUser = (req, res) => {
     message: 'This route is not yet defined! Please use /signup instead',
   });
 };
+
+//Don't change password with this!
 exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);

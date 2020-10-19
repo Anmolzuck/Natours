@@ -6,12 +6,14 @@ const handleCastErrorDB = (err) => {
 };
 
 const handleDuplicateFieldsDB = (err) => {
+  // error create by mongo (not by mongoose) when duplicate fields to POST
   const value = err.keyValue.name;
-
+  console.log(value);
   const message = `Duplicate filed value: ${value}. Please use another value.`;
   return new AppError(message, 400);
 };
 
+// handling jwt errors
 const handleJWTError = () =>
   new AppError('Invalid token! Please login again', 401);
 
@@ -25,6 +27,7 @@ const handleValidationErrorDB = (err) => {
 };
 
 const sendErrorDev = (err, req, res) => {
+  //For api
   if (req.originalUrl.startsWith('/api')) {
     res.status(err.statusCode).json({
       status: err.status,
@@ -33,6 +36,7 @@ const sendErrorDev = (err, req, res) => {
       stack: err.stack,
     });
   } else {
+    //For renderd website
     console.error('ERROR 💩', err);
 
     res.status(err.statusCode).render('error', {
@@ -43,30 +47,39 @@ const sendErrorDev = (err, req, res) => {
 };
 
 const sendErrorProd = (err, req, res) => {
+  //For API
   if (req.originalUrl.startsWith('/api')) {
+    //Operational , trusted error: send message to client
     if (err.isOperational) {
       return res.status(err.statusCode).json({
         status: err.status,
         message: err.message,
       });
     }
-
+    // Programming or other unknown error; dont leak error details
+    //1) log error
     console.error('ERROR 💩', err);
 
+    //2)Send generic message
     return res.status(500).json({
       status: 'error',
       message: 'Something went wrong!',
     });
   }
+
+  //For Renderd website
+  //Operational , trusted error: send message to client
   if (err.isOperational) {
     return res.status(err.statusCode).render('error', {
       title: 'Something went wrong!',
       msg: err.message,
     });
   }
-
+  // Programming or other unknown error; dont leak error details
+  //1) log error
   console.error('ERROR 💩', err);
 
+  //2)Send generic message
   return res.status(500).json({
     status: 'error',
     message: 'Something went wrong!',
@@ -82,7 +95,11 @@ module.exports = (err, req, res, next) => {
   } else if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
     error.message = err.message;
+    // let error = Object.create(err);
+    //let error = Object.assign(err);
+    // console.log(error);
 
+    //1) handling cast error
     if (error.name === 'CastError') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
     if (error.name === 'ValidationError')
