@@ -7,6 +7,9 @@ export const displayMap = (locations) => {
     container: 'map',
     style: 'mapbox://styles/anmolzakie/ckfv4yj5j0qmr19od7k6hsmtd',
     scrollZoom: false,
+    //   center: [-118.113491, 34.111745],
+    //   zoom: 10,
+    //   interactive: false,
   });
 
   const bounds = new mapboxgl.LngLatBounds();

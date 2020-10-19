@@ -11,6 +11,15 @@ router.get('/logout', authController.logout);
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
 
+/*let's keep in mind that this protect function here is really just a middleware.
+And also remember that middleware
+runs always in sequence, right?
+Now with this router that we have here,
+that we created in the beginning,
+is kind of like a mini application.
+And so just like with the regular app
+we can use middleware on this router as well.*/
+
 router.use(authController.protect);
 
 router.patch('/updateMyPassword', authController.updateMyPassword);
