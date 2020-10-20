@@ -37,6 +37,12 @@ exports.login = catchAsync(async (req, res) => {
   });
 });
 
+exports.getSignUpForm = (req, res) => {
+  res.status(200).render('signUp', {
+    title: 'Create a new account',
+  });
+};
+
 //We dont need to query for current user it is already done in protect
 exports.getAccount = (req, res) => {
   res.status(200).render('account', {
