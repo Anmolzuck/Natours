@@ -30,7 +30,13 @@ export const logout = async () => {
       url: '/api/v1/users/logout',
     });
 
-    if (res.data.status === 'success') location.reload(true); //this reloads page from server and not from browser caches
+    if (res.data.status === 'success') {
+      //this reloads page from server and not from browser caches
+      location.reload(true);
+      window.setTimeout(() => {
+        location.assign('/');
+      }, 1000);
+    }
   } catch (err) {
     console.log(err.response);
     showAlert('error', 'Error logging out! Try again');
