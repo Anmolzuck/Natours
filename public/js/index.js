@@ -29,7 +29,7 @@ if (signUpForm)
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const passwordConfirm = document.getElementById('passwordConfirm').value;
-    console.log('pepe');
+    //console.log('pepe');
     signup(name, email, password, passwordConfirm);
   });
 
