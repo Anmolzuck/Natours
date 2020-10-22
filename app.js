@@ -17,7 +17,7 @@ const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
 const viewRouter = require('./routes/viewRoutes');
-const bookingController = require('./controllers/bookingController');
+//const bookingController = require('./controllers/bookingController');
 
 const app = express();
 
@@ -48,11 +48,11 @@ app.use(
 );
 
 //Stripe webhook intergation . We add this route here because we want the response in raw form and not in json
-app.post(
-  '/webhook-checkout',
-  express.raw({ type: 'application/json' }), //raw parser
-  bookingController.webhookCheckout
-);
+// app.post(
+//   '/webhook-checkout',
+//   express.raw({ type: 'application/json' }), //raw parser
+//   bookingController.webhookCheckout
+// );
 
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
