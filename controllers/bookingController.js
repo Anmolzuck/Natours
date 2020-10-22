@@ -5,19 +5,43 @@ const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handleFactory');
 
-exports.getCheckoutSession = catchAsync(async (req, res, next) => {
-  // 1) Get the currently booked tour
-  const tour = await Tour.findById(req.params.tourId);
-  // console.log(tour);
+// exports.getCheckoutSession = catchAsync(async (req, res, next) => {
+//   // 1) Get the currently booked tour
+//   const tour = await Tour.findById(req.params.tourId);
+//   // console.log(tour);
 
-  // 2) Create checkout session
+//   // 2) Create checkout session
+//   const session = await stripe.checkout.sessions.create({
+//     payment_method_types: ['card'],
+//     success_url: `${req.protocol}://${req.get('host')}/my-tours`,
+//     cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
+//     customer_email: req.user.email,
+//     client_reference_id: req.params.tourId,
+//     display_items: [
+//       {
+//         name: `${tour.name} Tour`,
+//         description: tour.summary,
+//         images: [
+//           `${req.protocol}://${req.get('host')}/img/tours/${tour.imageCover}`,
+//         ],
+//         amount: tour.price * 100,
+//         currency: 'usd',
+//         quantity: 1,
+//       },
+//     ],
+//   });
+
+exports.getCheckoutSession = catchAsync(async (req, res, next) => {
+  //1 Get the currently booked tour based on tour id
+  const tour = await Tour.findById(req.params.tourID);
+
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
-    success_url: `${req.protocol}://${req.get('host')}/my-tours`,
-    cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
+    success_url: `${req.protocol}://${req.get('host')}/my-tour`,
+    cancel_url: `${req.protocol}://${req.get('host')}/tours/${tour.slug}`,
     customer_email: req.user.email,
-    client_reference_id: req.params.tourId,
-    display_items: [
+    client_reference_id: req.params.tourID,
+    line_items: [
       {
         name: `${tour.name} Tour`,
         description: tour.summary,
