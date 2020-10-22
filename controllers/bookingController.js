@@ -140,25 +140,25 @@ exports.deleteBooking = factory.deleteOne(Booking);
 // //   await Booking.create({ tour, user, price});
 // // }
 
-// // //Stripe webhooks . Now we dont need above code
-// // exports.webhookCheckout = (req, res, next) => {
-// //   const signature = req.headers['stripe-signature'];
-// //   let event;
-// //   try{
-// //     event = stripe.webhooks.constructEvent{
-// //       req.body,
-// //       signature,
-// //       process.env.STRIPE_WEBHOOK_SECRET
-// //     };
-// //   }catch(e){
-// //     return res.status(404).send(`Webhook error: ${e.message}`);
-// //   }
-// //   if(event.type === 'checkout.session.complete')
-// //   createBookingCheckout(event.data.object);
+//Stripe webhooks . Now we dont need above code
+// exports.webhookCheckout = (req, res, next) => {
+//   const signature = req.headers['stripe-signature'];
+//   let event;
+//   try{
+//     event = stripe.webhooks.constructEvent{
+//       req.body,
+//       signature,
+//       process.env.STRIPE_WEBHOOK_SECRET
+//     };
+//   }catch(e){
+//     return res.status(404).send(`Webhook error: ${e.message}`);
+//   }
+//   if(event.type === 'checkout.session.complete')
+//   createBookingCheckout(event.data.object);
 
-// //   res.status(200).json({recieved:true})
+//   res.status(200).json({recieved:true})
 
-// // };
+// };
 
 // exports.createBooking = factory.createOne(Booking);
 // exports.getBooking = factory.getOne(Booking);
